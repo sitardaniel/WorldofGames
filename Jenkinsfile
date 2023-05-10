@@ -22,18 +22,14 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'docker exec myapp-container python e2e.py --url http://localhost:8777'
+                sh 'python3 e2e.py'
             }
         }
 
         stage('Finalize') {
             steps {
                 sh 'docker-compose down'
-                sh 'docker-compose build'
-                sh 'docker tag myapp <your-dockerhub-username>/myapp:latest'
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
-                    sh 'docker push <your-dockerhub-username>/myapp:latest'
+                sh 'docker-compose push'
                 }
             }
         }
